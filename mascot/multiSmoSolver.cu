@@ -200,6 +200,7 @@ void MultiSmoSolver::deinit4Training() {
     checkCudaErrors(cudaFreeHost(hostBuffer));
     checkCudaErrors(cudaFree(devHessianMatrixCache));
     checkCudaErrors(cudaFree(devHessianDiag));
+    delete hessianCalculator;
     delete[] hessianDiag;
 }
 
