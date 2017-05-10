@@ -17,7 +17,7 @@ void GpuCache::enable(int i, int j, const SvmProblem &subProblem) {
     numOfElementEachRowInCache[i] = sizeOfEachRowInCache[i] / sizeof(float_point);
     numOfElementEachRowInCache[j] = sizeOfEachRowInCache[j] / sizeof(float_point);
     int uniqueCacheRowLength = max(problem.count[i], problem.count[j]);
-    int uniqueCacheSize = min(CACHE_SIZE * 1024 * 1024 / 4 / uniqueCacheRowLength, cacheSize[i] + cacheSize[j]);
+    int uniqueCacheSize = min(CACHE_SIZE * 1024 / uniqueCacheRowLength * 256, cacheSize[i] + cacheSize[j]);
     printf("unique cache row length %d, unique cache size %d\n", uniqueCacheRowLength, uniqueCacheSize);
     checkCudaErrors(cudaMallocPitch((void **) &devUniqueCache,
                                     &sizeOfEachRowInUniqueCache,
@@ -61,7 +61,7 @@ GpuCache::GpuCache(const SvmProblem &problem, const SVMParam &param) :
     for (int i = 0; i < problem.getNumOfClasses(); ++i) {
         int rowLength = problem.count[i];
         sharedCacheStrategy.push_back(new CLATCache(rowLength));
-        cacheSize.push_back(min(CACHE_SIZE * 1024 * 1024 / 4 / rowLength / 3, rowLength));
+        cacheSize.push_back(min(CACHE_SIZE / 3 * 1024 * 256 / rowLength, rowLength));
         printf("shared cache %d size=%d, #samples in class %d=%d\n", i, cacheSize[i], i, rowLength);
         sharedCacheStrategy[i]->SetCacheSize(cacheSize[i]);
         sharedCacheStrategy[i]->InitializeCache(cacheSize[i], rowLength);
