@@ -161,7 +161,7 @@ void MultiSmoSolver::init4Training(const SvmProblem &subProblem) {
 
     checkCudaErrors(cudaMallocHost((void **) &hostBuffer, sizeof(float_point) * 5));
 
-    int cacheSize = CACHE_SIZE * 1024 * 1024 / 4 / trainingSize;
+    int cacheSize = CACHE_SIZE * 1024 * 256 / trainingSize;
     gpuCache = new CLATCache(subProblem.getNumOfSamples());
     gpuCache->SetCacheSize(cacheSize);
     gpuCache->InitializeCache(cacheSize, trainingSize);
